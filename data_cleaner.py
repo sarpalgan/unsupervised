@@ -146,32 +146,8 @@ class DataCleaning:
             if len(indices) != 0:
                 df.drop(indices, axis = 0, inplace=True)
         return df, indices
-
-    def drop_displayer(df, indices):
-        """
-        Updates a dataframe with a 'drops' column to indicate the indices that were dropped.
-
-        Args:
-        - df (pandas.DataFrame): A pandas dataframe to update.
-        - indices (list): A list of indices that were dropped.
-
-        Returns:
-        - df (pandas.DataFrame): A pandas dataframe with the 'drops' column updated.
-        """
-        if len(indices) != 0:
-            if indices == indices0:
-                lst = '1st'
-            elif indices == indices1:
-                lst = '2nd'
-            elif indices == indices2:
-                lst = '3rd'
-            else:
-                raise ValueError(f'could not find indices list {indices}')
-            for index in indices:
-                df.at[index, 'drops'] = f'{lst} drop'
-        return df  
-
-    def clean_noise(df, zs, cluster, x, final = False):
+    
+    def clean_noise(self, df, zs, cluster, x, final = False):
         """
         Perform data cleaning to remove noise from a dataframe.
 
@@ -190,6 +166,31 @@ class DataCleaning:
             ValueError: If indices list cannot be found.
 
         """
+
+        def drop_displayer(df, indices):
+            """
+            Updates a dataframe with a 'drops' column to indicate the indices that were dropped.
+
+            Args:
+            - df (pandas.DataFrame): A pandas dataframe to update.
+            - indices (list): A list of indices that were dropped.
+
+            Returns:
+            - df (pandas.DataFrame): A pandas dataframe with the 'drops' column updated.
+            """
+            if len(indices) != 0:
+                if indices == indices0:
+                    lst = '1st'
+                elif indices == indices1:
+                    lst = '2nd'
+                elif indices == indices2:
+                    lst = '3rd'
+                else:
+                    raise ValueError(f'could not find indices list {indices}')
+                for index in indices:
+                    df.at[index, 'drops'] = f'{lst} drop'
+            return df 
+
         # Display or not
         display_results = self.displayer
 
@@ -224,9 +225,9 @@ class DataCleaning:
 
             # If there are indices to drop and final flag is True, display the results of the cleaning process
             if ((len(indices0) != 0) or (len(indices1) != 0) or (len(indices2) != 0)) and (final):
-                df = DataCleaning.drop_displayer(df, indices0)
-                df = DataCleaning.drop_displayer(df, indices1)
-                df = DataCleaning.drop_displayer(df, indices2)
+                df = drop_displayer(df, indices0)
+                df = drop_displayer(df, indices1)
+                df = drop_displayer(df, indices2)
                 
                 # If the cluster is Cluster1, set 'common' column to True for common indices
                 if cluster == 'Cluster1':
@@ -274,12 +275,12 @@ class DataCleaning:
 
             # Clean cluster 2
             clean = self.data_clusters[self.data_clusters['Cluster2'].isnull() == False].copy()
-            self.drop_list += DataCleaning.clean_noise(clean, zs = self.z_score, cluster = 'Cluster2', x = x)
-
+            self.drop_list += DataCleaning.clean_noise(self, df = clean, zs = self.z_score, cluster = 'Cluster2', x = x)
+            
             # Clean cluster 1
             drop_list2 = []
             clean = self.data_clusters.copy()
-            drop_list2 += DataCleaning.clean_noise(clean, zs = self.z_score, cluster = 'Cluster1', x = x)
+            drop_list2 += DataCleaning.clean_noise(self, df = clean, zs = self.z_score, cluster = 'Cluster1', x = x)
             
             # Remove clusters with insufficient data
             self.drop_list += DataCleaning.common_member(drop_list2, self.data_clusters[self.data_clusters['Cluster2'].isnull() == True].index.tolist())
@@ -306,12 +307,12 @@ class DataCleaning:
                 
                     self.drop_list = []
                     clean = self.data_clusters[self.data_clusters['Cluster2'].isnull() == False].copy()
-                    self.drop_list += DataCleaning.clean_noise(clean, zs = self.z_score, cluster = 'Cluster2', x = x, final = final)
+                    self.drop_list += DataCleaning.clean_noise(self, df = clean, zs = self.z_score, cluster = 'Cluster2', x = x, final = final)
 
                     
                     drop_list2 = []
                     clean = self.data_clusters.copy()
-                    drop_list2 += DataCleaning.clean_noise(clean, zs = self.z_score, cluster = 'Cluster1', x = x, final = final)
+                    drop_list2 += DataCleaning.clean_noise(self, df = clean, zs = self.z_score, cluster = 'Cluster1', x = x, final = final)
 
                     self.drop_list += DataCleaning.common_member(drop_list2, self.data_clusters[self.data_clusters['Cluster2'].isnull() == True].index.tolist())
 
