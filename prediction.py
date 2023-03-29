@@ -7,7 +7,7 @@ import pickle
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
 from sklearn.decomposition import PCA
-from IPython.display import display_html 
+#from IPython.display import display_html 
 
 from data_preprocess import DataPreprocessing
 
