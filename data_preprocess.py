@@ -14,7 +14,7 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from kneed import KneeLocator
 from scipy.optimize import curve_fit
-from IPython.display import display_html 
+#from IPython.display import display_html 
 
 warnings.filterwarnings('ignore')
 pd.set_option('display.max_rows', None)
@@ -179,7 +179,7 @@ class DataPreprocessing:
         self.df_coef['percentage'] = ''
         for i in range(len(self.df_coef)):
             self.df_coef['percentage'][i] = self.df_coef['coef'][i] / sum(self.df_coef['coef'])
-        display(self.df_coef)
+        print(self.df_coef) #display
 
         for i in range(len(self.df_coef)):
             if self.df_coef['percentage'][i] < 0.005:
@@ -286,11 +286,11 @@ class DataPreprocessing:
                                     
                 #######################################
     
-        plt.figure(figsize=(15,10))
+        #plt.figure(figsize=(15,10))
 
         x = K1
         y = Sum_of_squared_distances
-        plt.plot(x, y, 'bx')
+        #plt.plot(x, y, 'bx')
 
         #x.append(K_final)
         #y.append(0)
@@ -305,10 +305,10 @@ class DataPreprocessing:
 
 
         kn = KneeLocator(K2_range, func(K2_range, *popt), curve = 'convex', direction = 'decreasing')
-        plt.vlines(int(kn.knee), plt.ylim()[0], plt.ylim()[1], colors = 'g', linestyles = 'solid')
+        #plt.vlines(int(kn.knee), plt.ylim()[0], plt.ylim()[1], colors = 'g', linestyles = 'solid')
         print('solid: ', int(kn.knee))
         kn_exp = int(kn.knee)
-        plt.plot(K2_range, func(K2_range, *popt), 'g-')
+        #plt.plot(K2_range, func(K2_range, *popt), 'g-')
                 
                 #######################################
             
@@ -333,7 +333,7 @@ class DataPreprocessing:
         x_fit = np.arange(1, x[-1], 1)
         y_fit = np.polyval(z, x_fit)
         
-        plt.plot(x_fit, y_fit, 'r--')  
+        #plt.plot(x_fit, y_fit, 'r--')  
 
                 #######################################              
                         
@@ -341,12 +341,12 @@ class DataPreprocessing:
         kmeans_clusters = self.kmeans.predict(self.data_onehot_clusters_pca)
         self.data_clusters.insert(0, "Cluster1", kmeans_clusters, True)
 
-        plt.plot(K1, Sum_of_squared_distances, 'x')
-        plt.xlabel('Values of k')
-        plt.ylabel('Sum of squared distances/Inertia')
-        plt.title('Elbow Method For Optimal k')
-        plt.vlines(knee, plt.ylim()[0], plt.ylim()[1], colors = 'r', linestyles = 'dashed')
-        plt.show()
+        #plt.plot(K1, Sum_of_squared_distances, 'x')
+        #plt.xlabel('Values of k')
+        #plt.ylabel('Sum of squared distances/Inertia')
+        #plt.title('Elbow Method For Optimal k')
+        #plt.vlines(knee, plt.ylim()[0], plt.ylim()[1], colors = 'r', linestyles = 'dashed')
+        #plt.show()
         print(f'degree of polyfit = {range(5,15)[index]}')
         print(f'\n\tCluster1 = {kn_exp}')
         print(f'\n\tCluster2 = {K2}')
