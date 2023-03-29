@@ -6,7 +6,7 @@ import pickle
 import configparser
 from typing import List, Tuple
 
-from IPython.display import display_html 
+#from IPython.display import display_html 
 from sklearn.model_selection import train_test_split
 
 warnings.filterwarnings('ignore')
@@ -239,7 +239,7 @@ class DataCleaning:
                     # If there are common indices, display the results of the cleaning process
                     if len(df[(df[cluster] == item) & (df['common'] == 'True')]) != 0:
                         print(f'\n\ncleaning in {cluster}')
-                        display(df[df[cluster] == item][['Cluster1', 'Cluster2'] + cols + ['drops', 'common']])
+                        print(df[df[cluster] == item][['Cluster1', 'Cluster2'] + cols + ['drops', 'common']]) # display
                         per = 100 * (len(indices0) + len(indices1) + len(indices2)) / len(df[(df[cluster] == item) & (df['common'] == 'True')])
                         print(f'total cleaning percentage = {int(per)}%')
                         print('\n\n---------------------------------------------------------------------------------------')
@@ -247,7 +247,7 @@ class DataCleaning:
                 # If the cluster is not Cluster1, display the results of the cleaning process    
                 else:
                     print(f'\n\ncleaning in {cluster}')
-                    display(df[df[cluster] == item][[cluster] + cols + ['drops']])
+                    print(df[df[cluster] == item][[cluster] + cols + ['drops']]) #display
                     per = 100 * (len(indices0) + len(indices1) + len(indices2)) / len(df[df[cluster] == item])
                     print(f'cleaning percentage = {int(per)}%')
                     print('\n\n---------------------------------------------------------------------------------------')
@@ -317,7 +317,7 @@ class DataCleaning:
 
                     for item in self.data_clusters['Cluster1'].unique():
                         if len(self.data_clusters[self.data_clusters['Cluster1'] == item]) < 3:
-                            display(self.data_clusters[self.data_clusters['Cluster1'] == item])
+                            print(self.data_clusters[self.data_clusters['Cluster1'] == item]) #display
                             self.drop_list += self.data_clusters[self.data_clusters['Cluster1'] == item].index.tolist()
                             print(f'Cleaned Cluster1 = {item} due to insufficient data')
 
