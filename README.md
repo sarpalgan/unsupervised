@@ -18,13 +18,13 @@ python
 
 *4. Import the library:*
 ```bash
-import run
+from model import Do
 ```
 
 *5. Run one or many of the following lines depending on your request:*
 ```bash
-run.Preprocess()
-run.Clean()
-run.Predict(mode='test') 
+Do.Preprocessing()
+Do().Cleaning()
+Do().Prediction(mode='test')
 ```
 
