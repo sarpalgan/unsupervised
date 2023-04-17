@@ -60,13 +60,13 @@ class DataCleaning:
         Reads settings.ini to get values for the threshold values and test size.
         """
         config = configparser.ConfigParser()
-        config.read('settings.ini')
-
-        self.test_size: float = config.getfloat('DATA', 'test_size')
-        self.zs0: float = config.getfloat('DATA', 'zs0')
-        self.z_score: float = config.getfloat('DATA', 'z_score')
-        self.max_clean_perc: float = config.getfloat('DATA', 'max_clean_perc')
-        self.displayer = config.get('DATA', 'displayer')
+        config.read('ayarlar.ini')
+        self.data_path: str = config.get('DUZENLEME', 'data_path')
+        self.test_size: float = config.getfloat('GENEL', 'TestYuzdesi')
+        self.zs0: float = config.getfloat('GENEL', 'ZScore0')
+        self.z_score: float = config.getfloat('GENEL', 'ZScore')
+        self.max_clean_perc: float = config.getfloat('GENEL', 'MaxSilinmeYuzdesi')
+        self.displayer = True #config.get('DATA', 'displayer')
 
         self.df_coef = None
         self.data_clusters = None
@@ -372,5 +372,6 @@ class DataCleaning:
         Returns:
         None
         """
-        with open('data_cleaning.pickle', 'wb') as f:
+        csv_name = self.data_path
+        with open(f'{csv_name}_data_cleaning.pickle', 'wb') as f:
             pickle.dump(self, f)

@@ -23,16 +23,17 @@ class DataPreprocessing:
 
     def __init__(self):
         config = configparser.ConfigParser()
-        config.read('settings.ini')
+        config.read('ayarlar.ini')
 
-        self.data_path: str = config.get('DATA', 'data_path')
-        self.data = pd.read_csv(self.data_path, dtype=str, sep=';', encoding='utf-8').fillna('BOS')
-        self.time_cols: List[str] = config.get('DATA', 'time_cols').split(', ') #['PARTIACILISTARIHI', 'PARTIILKSEVKTARIHI', 'time']
-        self.drop_clmns: List[str] = config.get('DATA', 'drop_clmns').split(', ') #['ICTAMIRVAR', 'LYCRATIPIID']
-        self.qtv_fts: List[str] = config.get('DATA', 'qtv_fts').split(', ') #['SIPARISKILO', 'SIPARISMETRE']
-        self.morethan: int = config.getint('DATA', 'morethan')
-        self.pca_ratio: float = config.getfloat('DATA', 'pca_ratio')
+        self.data_path: str = config.get('DUZENLEME', 'data_path') 
+        self.data = pd.read_csv(self.data_path + '.csv', dtype=str, sep=';', encoding='latin').fillna('BOS')
+        self.qtv_fts: List[str] = config.get('DUZENLEME', 'qtv_fts').split(', ') #['SIPARISKILO', 'SIPARISMETRE']
+        self.morethan: int = config.getint('GENEL', 'MaxTerminSuresi')
+        self.pca_ratio: float = config.getfloat('GENEL', 'PCAOrani')
 
+        #self.time_cols = ['PARTIACILISTARIHI', 'PARTIILKSEVKTARIHI', 'time']  # Will be deleted
+        #self.time_cols = ['SIPARISTARIHI', 'GELDIGITARIH', 'time']  # Will be deleted
+        self.drop_clmns = ['ICTAMIRVAR', 'LYCRATIPIID']                       # Will be deleted
         self.ini_len = len(self.data)
         self.ft_wt = []
         self.cat_fts = None
@@ -49,12 +50,13 @@ class DataPreprocessing:
         self.data_clusters = None
         self.cols_list = None
         
-    def drop_columns(self):
-        self.data = self.data.drop(columns=self.drop_clmns)
+    def drop_columns(self):                                                   # Will be deleted
+        for item in set(self.drop_clmns) & set(self.data.columns.to_list()):
+          self.data = self.data.drop(columns=item)
     
     def tedarik_suresi_hesapla(self, days = [], max_time_limit = 0):
 
-        columns = self.time_cols
+        columns = ['SIPARISTARIHI', 'GELDIGITARIH'] #self.time_cols
         data = self.data.copy()
 
         for i in range(len(data)):
@@ -126,7 +128,7 @@ class DataPreprocessing:
             else:
                 data.at[i, "week_day"] = '6'
 
-        data.drop([columns[0], columns[1], 'TERMINTARIHI', 'week'], inplace=True, axis=1)    
+        data.drop([columns[0], columns[1], 'TEDARIKSURESI', 'week'], inplace=True, axis=1)    
         self.data = data
 
     def drop_long_time(self):
@@ -135,7 +137,7 @@ class DataPreprocessing:
 
     def find_cat_fts(self):
         self.cat_fts = self.data.columns.to_list()
-        for item in self.qtv_fts:
+        for item in set(self.qtv_fts) & set(self.data.columns.to_list()):
             self.cat_fts.remove(item)
         self.cat_fts.remove('time')
         self.column_name = self.cat_fts
@@ -355,5 +357,5 @@ class DataPreprocessing:
         self.data_clusters.head()
 
     def save_results(self):
-        with open('data_preprocessing.pickle', 'wb') as f:
+        with open(f'{self.data_path}_data_preprocessing.pickle', 'wb') as f:
             pickle.dump(self, f)
